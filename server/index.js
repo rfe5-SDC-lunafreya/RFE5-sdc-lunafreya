@@ -4,6 +4,9 @@ const morgan = require('morgan');
 const {TOKEN} = require('../config.js');
 
 let app = express();
+var router = require('./routes.js');
+app.use('/catwalk', router); //placeholder
+
 
 app.use(express.static(__dirname + '/../dist'));
 
