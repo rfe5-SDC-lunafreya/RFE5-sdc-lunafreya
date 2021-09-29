@@ -18,3 +18,5 @@ router.post('/cart', controller.xx.get);
 
 
 //reviews
+
+module.exports = routes;
