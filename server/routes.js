@@ -19,4 +19,10 @@ router.post('/cart', controller.xx.get);
 
 //reviews
 
+router.get('/product/:productId/', xx.getReviews);
+router.put('/:reviewId/helpful', xx.updateReviewHelpful);
+router.put('/:reviewId/report', xx.reportReview);
+router.post('/', xx.postReview);
+
+
 module.exports = routes;
