@@ -1,3 +1,4 @@
+const { response } = require('express');
 const models = require('../models/reviews.js');
 
 module.exports = {
@@ -22,5 +23,25 @@ module.exports = {
     .catch(err => {
       res.send(err)
     })
-  }
+  },
+
+  updateReviewHelpful: (req, res) => {
+    models.updateReviewHelpful(req.params.review_id)
+    .then(response => {
+      res.send(response)
+    })
+    .catch(err => {
+      res.send(err)
+    })
+  },
+
+  // postReview: (req, res) => {
+  //   models.postReview(req.params.data)
+  //   .then(response => {
+  //     res.send(response)
+  //   })
+  //   .catch(err => {
+  //     res.send(err)
+  //   })
+  // }
 }

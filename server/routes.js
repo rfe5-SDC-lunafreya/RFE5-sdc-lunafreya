@@ -20,7 +20,7 @@ var router = require('express').Router();
 //reviews
 //console.log(controller.reviews.getReviewsC)
 router.get('/:product_id/reviews/', controller.reviews.getReviewsC);
-//router.put('/:reviewId/helpful', xx.updateReviewHelpful);
+router.put('/:review_id/helpful', controller.reviews.updateReviewHelpful);
 router.put('/:review_id/report', controller.reviews.reportReview);
 // router.post('/', xx.postReview);
 
