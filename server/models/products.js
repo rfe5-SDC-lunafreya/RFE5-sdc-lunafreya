@@ -128,7 +128,8 @@ module.exports = {
       })
       .then((data) => {
         //this data represent the fully formatted style data, send it back to the controller
-        callback(null, data);
+        styles.results = data;
+        callback(null, styles);
       });
   },
 
