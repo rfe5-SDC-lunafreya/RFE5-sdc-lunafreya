@@ -3,11 +3,11 @@ var router = require('express').Router();
 
 //Connect controller methods to their corresponding routes
 //products
-router.get('/products', controller.xx.get);
-router.get('/products/:product_id/styles', controller.xx.get);
-router.get('/products/:product_id/related', controller.xx.get);
-router.get('/cart', controller.xx.get);
-router.post('/cart', controller.xx.get);
+// router.get('/products', controller.xx.get);
+// router.get('/products/:product_id/styles', controller.xx.get);
+// router.get('/products/:product_id/related', controller.xx.get);
+// router.get('/cart', controller.xx.get);
+// router.post('/cart', controller.xx.get);
 
 
 //qa
@@ -18,11 +18,11 @@ router.post('/cart', controller.xx.get);
 
 
 //reviews
+//console.log(controller.reviews.getReviewsC)
+router.get('/:product_id/reviews/', controller.reviews.getReviewsC);
+//router.put('/:reviewId/helpful', xx.updateReviewHelpful);
+router.put('/:review_iChed/report', controller.reviews.reportReview);
+// router.post('/', xx.postReview);
 
-router.get('/product/:productId/', xx.getReviews);
-router.put('/:reviewId/helpful', xx.updateReviewHelpful);
-router.put('/:reviewId/report', xx.reportReview);
-router.post('/', xx.postReview);
 
-
-module.exports = routes;
+module.exports = router;

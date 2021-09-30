@@ -10,8 +10,17 @@ const pool = new Pool({
   port: process.env.PG_PORT,
 });
 
-pool.connect();
-module.exports = {pool};
+pool
+.connect()
+.then( () => {
+  console.log('Connected to postgreSQL');
+})
+.catch(err => {
+  console.log('error connecting: ', err);
+});
+
+
+exports.pool = pool;
 
 
 
