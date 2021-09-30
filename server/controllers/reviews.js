@@ -1,12 +1,26 @@
 const { response } = require('express');
 const models = require('../models/reviews.js');
+const funcs = require('../../reviews_database_service/helpers.js');
 
 module.exports = {
   getReviewsC: (req, res) => {
     console.log(req.params.product_id)
     models.getReviews(req.params.product_id)
       .then(data => {
-        res.send(data);
+        //console.log(funcs.organizePhotos(data))
+        data.forEach(review => {
+          var photosObj = funcs.organizePhotos(review)
+          delete review.photo_url
+          delete review.photo_id
+          //photosArr.push(photosObj)
+          review.photo = photosObj
+          console.log('REVIEW', review)
+        })
+        return data;
+      })
+      .then(newReviews => {
+        console.log('newReviews', newReviews)
+        res.send(newReviews);
       })
       .catch(err => {
         console.log('get CLAT', err)
