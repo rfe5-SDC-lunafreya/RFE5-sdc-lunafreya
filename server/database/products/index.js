@@ -4,7 +4,7 @@ const { dbConfig } = require('./config.js');
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  max: 20,
+  max: 100,
   database: 'SDC_Products',
   password: dbConfig.password,
   port: process.env.PORT || 5432
