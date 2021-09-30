@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const AnswerPhotoSchema = new mongoose.Schema({
-  id: String,
-  answer_id: String,
+  id: Number,
+  answer_id: Number,
   url: String,
 });
 
-const AnswerPhotoModel = mongoose.model("answer_photo", AnswerPhotoSchema);
+const AnswerPhotoModel = mongoose.model("answers_photo", AnswerPhotoSchema);
 
 module.exports = AnswerPhotoModel;
