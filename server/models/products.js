@@ -158,20 +158,14 @@ module.exports = {
         callback(err, null);
       });
   },
-};
-
-// SELECT id, jsonb_object_agg(size, quantity)
-// FROM skus
-// WHERE styleId IN (73347, 73348)
-// GROUP BY id
-
-// getStyles: function (param, callback) {
+  /* -------------------------------------Using Callback-----------------------------------------*/
+  // getStyles: function (param, callback) {
   //   const id = Number(param.product_id);
   //   const params = [id];
   //   const styles = {
   //     product_id: id,
-  //     results: []
-  //   }
+  //     results: [],
+  //   };
   //   let check = 0;
   //   const queryString = `SELECT id AS style_id, name, original_price, sale_price, default_style AS "defautl?" FROM styles WHERE productId = $1`;
   //   db.query(queryString, params, (err, res) => {
@@ -180,22 +174,41 @@ module.exports = {
   //     } else {
   //       styles.results = res.rows;
   //       styles.results.forEach((style) => {
-  //         const styleId = style.style_id
+  //         const styleId = style.style_id;
   //         const queryString = `SELECT thumbnail_url, url FROM photos WHERE styleId=${styleId}`;
   //         db.query(queryString, (err, res) => {
   //           if (err) {
   //             callback(err, null);
   //           } else {
-  //             console.log(res.rows)
+  //             // console.log(res.rows);
   //             style.photos = res.rows.slice();
-  //             check ++;
-  //             console.log(check)
+  //             const querySkus = `SELECT id, quantity, size FROM skus WHERE styleId=${styleId}`;
+  //             db.query(querySkus, (err, res) => {
+  //               if (err) {
+  //                 callback(err, null);
+  //               } else {
+  //                 console.log(res.rows);
+  //                 const skusResult = {};
+  //                 for (let sku of res.rows) {
+  //                   const stock = {
+  //                     size: sku.size,
+  //                     quantity: sku.quantity,
+  //                   };
+  //                   skusResult[sku.id] = stock;
+  //                   style.skus = skusResult;
+  //                 }
+  //                 check++;
+  //                 if (check === styles.results.length) {
+  //                   callback(styles, null);
+  //                 }
+  //               }
+  //             });
   //           }
-  //         })
-  //       })
+  //         });
+  //       });
   //     }
-  //   })
-  //   if(check === 4) {
-  //     callback(null, styles);
-  //   }
+  //   });
   // },
+};
+
+
