@@ -17,24 +17,31 @@ module.exports = {
 
   getOne: function (param, callback) {
     const id = Number(param.product_id);
-    const queryProduct = `SELECT * FROM products WHERE id=${id}`;
-    db.query(queryProduct, (err, res) => {
-      if (err) {
+    const queryString = `SELECT products.id, products.name, products.description, products.category, products.default_price, array_agg(features.feature) AS feature, array_agg(features.value) AS value
+    FROM products
+    INNER JOIN features ON products.id = features.product_id
+    WHERE products.id=${id}
+    GROUP BY products.id, products.name, products.description, products.category, products.default_price`;
+
+    db.query(queryString)
+      .then((data) => {
+        var product = data.rows[0];
+        var features = [];
+        for (let i = 0; i < product.feature.length; i++) {
+          const feature = {
+            feature: product.feature[i],
+            value: product.value[i],
+          };
+          features.push(feature);
+        }
+        delete product.feature;
+        delete product.value;
+        product.features = features;
+        callback(null, product);
+      })
+      .catch((err) => {
         callback(err, null);
-      } else {
-        const product = res.rows;
-        const queryFeature = `SELECT feature, value FROM features WHERE product_id=${id}`;
-        db.query(queryFeature, (err, res) => {
-          if (err) {
-            callback(err, null);
-          } else {
-            product[0].features = res.rows;
-            // console.log(product);
-            callback(null, product);
-          }
-        });
-      }
-    });
+      });
   },
 
   getStyles: function (param, callback) {
@@ -158,57 +165,7 @@ module.exports = {
         callback(err, null);
       });
   },
-  /* -------------------------------------Using Callback-----------------------------------------*/
-  // getStyles: function (param, callback) {
-  //   const id = Number(param.product_id);
-  //   const params = [id];
-  //   const styles = {
-  //     product_id: id,
-  //     results: [],
-  //   };
-  //   let check = 0;
-  //   const queryString = `SELECT id AS style_id, name, original_price, sale_price, default_style AS "defautl?" FROM styles WHERE productId = $1`;
-  //   db.query(queryString, params, (err, res) => {
-  //     if (err) {
-  //       callback(err, null);
-  //     } else {
-  //       styles.results = res.rows;
-  //       styles.results.forEach((style) => {
-  //         const styleId = style.style_id;
-  //         const queryString = `SELECT thumbnail_url, url FROM photos WHERE styleId=${styleId}`;
-  //         db.query(queryString, (err, res) => {
-  //           if (err) {
-  //             callback(err, null);
-  //           } else {
-  //             // console.log(res.rows);
-  //             style.photos = res.rows.slice();
-  //             const querySkus = `SELECT id, quantity, size FROM skus WHERE styleId=${styleId}`;
-  //             db.query(querySkus, (err, res) => {
-  //               if (err) {
-  //                 callback(err, null);
-  //               } else {
-  //                 console.log(res.rows);
-  //                 const skusResult = {};
-  //                 for (let sku of res.rows) {
-  //                   const stock = {
-  //                     size: sku.size,
-  //                     quantity: sku.quantity,
-  //                   };
-  //                   skusResult[sku.id] = stock;
-  //                   style.skus = skusResult;
-  //                 }
-  //                 check++;
-  //                 if (check === styles.results.length) {
-  //                   callback(styles, null);
-  //                 }
-  //               }
-  //             });
-  //           }
-  //         });
-  //       });
-  //     }
-  //   });
-  // },
+
 };
 
 
