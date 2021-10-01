@@ -1,25 +1,15 @@
 const mongoose = require("mongoose");
 
 const QuestionSchema = new mongoose.Schema({
-  id: Number,
-  product_id: Number,
+  id: String,
+  product_id: String,
   body: String,
-  date_written: {
-    type: Date,
-    default: Date.now,
-  },
+  date_written: Date,
   asker_name: String,
   asker_email: String,
-  reported: {
-    type: Boolean,
-    default: false,
-  },
-  helpful: {
-    type: Number,
-    default: 0,
-  },
+  reported: String,
+  helpful: String,
 });
-QuestionSchema.index({ id: 1 }, { unique: true });
 
 const QuestionModel = mongoose.model("question", QuestionSchema);
 
