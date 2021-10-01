@@ -11,10 +11,8 @@ let app = express();
 var router = require("./routes.js");
 app.use(express.json());
 // qa router
-const qaRouter = require("./controllers/qa.routes");
-app.use("/qa", qaRouter);
 
-app.use("/catwalk", router); //placeholder
+app.use("", router); //placeholder
 
 app.use(express.static(__dirname + "/../dist"));
 
