@@ -1,6 +1,6 @@
-var controller = require('./controllers');
-var router = require('express').Router();
-
+var controller = require("./controllers");
+var router = require("express").Router();
+const QAController = require("./controllers/qa");
 //Connect controller methods to their corresponding routes
 //products
 // router.get('/products', controller.xx.get);
