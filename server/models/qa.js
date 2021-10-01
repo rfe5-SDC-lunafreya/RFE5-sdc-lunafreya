@@ -1,7 +1,9 @@
 const AnswerModel = require("./qa.schemas/answer.schema");
 const AnswerPhotoModel = require("./qa.schemas/answer-photo.schema");
 const QuestionModel = require("./qa.schemas/question.schema");
-
+// connect to mongodb use mongoose
+const mongoose = require("mongoose");
+mongoose.connect("mongodb://localhost:27017/shop");
 class QAService {
   constructor() {}
 
