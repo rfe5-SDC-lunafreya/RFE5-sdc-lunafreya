@@ -28,4 +28,25 @@ const organizePhotos = (reviews) => {
   }
 
 };
-module.exports = {organizePhotos}
+
+const handleSortAndCount = function(data, sort, count) {
+  if (sort === 'helpful') {
+  data.sort((a, b) => b.helpfulness - a.helpfulness)
+  }
+
+  if (sort === 'newest') {
+    data.sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+  }
+
+  if (count) {
+    data = data.slice(0, count);
+  }
+
+  return data;
+};
+
+
+module.exports = {
+  organizePhotos,
+  handleSortAndCount
+}

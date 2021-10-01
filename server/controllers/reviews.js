@@ -4,10 +4,12 @@ const funcs = require('../../reviews_database_service/helpers.js');
 
 module.exports = {
   getReviewsC: (req, res) => {
+    const sort = req.query.sort;
+    const count = req.query.count;
     console.log(req.params.product_id)
     models.getReviews(req.params.product_id)
       .then(data => {
-        //console.log(funcs.organizePhotos(data))
+        console.log(funcs.organizePhotos(data))
         data.forEach(review => {
           var photosObj = funcs.organizePhotos(review)
           delete review.photo_url
@@ -19,11 +21,17 @@ module.exports = {
         return data;
       })
       .then(newReviews => {
+        if(sort || count) {
+          funcs.handleSortAndCount(newReviews, sort, count)
+        }
+        return newReviews;
+      })
+      .then(newReviews => {
         console.log('newReviews', newReviews)
         res.send(newReviews);
       })
       .catch(err => {
-        console.log('get CLAT', err)
+        console.log('Wumbo', err)
         res.send(err)
       })
   },
