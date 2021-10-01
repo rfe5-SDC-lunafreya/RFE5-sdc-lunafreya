@@ -7,8 +7,7 @@ module.exports = {
   getReviews: function (product_id) {
     const data = db.pool
    console.log(product_id)
-    return data.query(`SELECT DISTINCT
-    reviews.id AS reviews_id, reviews.rating, reviews.summary, reviews.recommend, reviews.response, reviews.body, to_timestamp(reviews.date / 1000) AS date, reviews.reviewer_name, reviews.helpfulness, reviews.reported, reviews_photos.url AS photo_url, reviews_photos.id AS photo_id
+    return data.query(`SELECT DISTINCT reviews.product_id AS product, reviews.id AS reviews_id, reviews.rating, reviews.summary, reviews.recommend, reviews.response, reviews.body, to_timestamp(reviews.date / 1000) AS date, reviews.reviewer_name, reviews.helpfulness, reviews.reported, reviews_photos.url AS photo_url, reviews_photos.id AS photo_id
     FROM reviews LEFT JOIN reviews_photos
         ON reviews_photos.review_id = reviews.id, products
     WHERE reviews.product_id = ${product_id}
@@ -44,21 +43,44 @@ module.exports = {
       console.log(('ERROR adding helpful note', err))
     })
   },
+
+  getMetaData: function (product_id) {
+  const QS = `SELECT DISTINCT
+  reviews.id AS reviews_id, reviews.rating, reviews.recommend, reviews_characteristics.value AS characteristics_value, reviews_characteristics.characteristic_id AS characteristics_id, characteristics.name AS characteristics_name
+  FROM reviews LEFT JOIN characteristics
+      ON characteristics.product_id = reviews.product_id,
+  reviews_characteristics, products
+  WHERE reviews.product_id = ${product_id}
+  AND reviews_characteristics.review_id = reviews.id
+  AND characteristics.id = reviews_characteristics.characteristic_id
+  AND reviews.product_id = products.id;`
+    const data = db.pool
+    return data.query(QS)
+    .then(responseData => {
+      // console.log(responseData.rows)
+      return responseData.rows;
+    })
+    .catch(err => {
+      console.log('ERROR MODEL', err)
+    })
+},
+
   // ?convert date?  ROUND(EXTRACT(EPOCH FROM NOW())::float*1000)
-  // postReview: function (review) {
-  //   const data = db.pool;
-  //   const reviewsQString = ` INSERT INTO reviews(id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(DEFAULT, ${data.product_id}, ${data.rating}, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), '${data.summary}', '${data.body}', ${data.recommend}, FALSE, '${data.name}', '${data.email}', '', 0)`
-  //   return data.query()
-  // }
 
+  //! Going to have to refurbish incoming data and break it into pieces to place in different tables.
 
+  postReview: function (review) {
+    const data = db.pool;
+
+    return data.query()
+  }
 }
 
 
 
 
 
-//`SELECT DISTINCT
+// `SELECT DISTINCT
 // reviews.id AS reviews_id, reviews.rating, reviews.summary, reviews.recommend, reviews.response, reviews.body, to_timestamp(reviews.date / 1000) AS date, reviews.reviewer_name, reviews.helpfulness, reviews.reported, reviews_characteristics.value AS characteristics_value, reviews_characteristics.characteristic_id AS characteristics_id, characteristics.name AS characteristics_name, products.name AS product_name, reviews_photos.url AS photo_url, reviews_photos.id AS photo_id
 // FROM reviews LEFT JOIN reviews_photos
 //     ON reviews_photos.review_id = reviews.id,

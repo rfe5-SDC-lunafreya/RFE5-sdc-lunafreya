@@ -12,7 +12,7 @@ const pool = new Pool({
 
 pool
 .connect()
-.then( () => {
+.then(() => {
   console.log('Connected to postgreSQL');
 })
 .catch(err => {

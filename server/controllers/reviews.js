@@ -9,12 +9,11 @@ module.exports = {
     console.log(req.params.product_id)
     models.getReviews(req.params.product_id)
       .then(data => {
-        console.log(funcs.organizePhotos(data))
+        //console.log(funcs.organizePhotos(data))
         data.forEach(review => {
           var photosObj = funcs.organizePhotos(review)
           delete review.photo_url
           delete review.photo_id
-          //photosArr.push(photosObj)
           review.photo = photosObj
           console.log('REVIEW', review)
         })
@@ -56,14 +55,24 @@ module.exports = {
       res.send(err)
     })
   },
-
-  // postReview: (req, res) => {
-  //   models.postReview(req.params.data)
-  //   .then(response => {
-  //     res.send(response)
-  //   })
-  //   .catch(err => {
-  //     res.send(err)
-  //   })
-  // }
+  getMetaData: (req, res) => {
+    console.log(req.params.product_id)
+    models.getMetaData(req.params.product_id)
+    .then(response => {
+      res.send(response)
+    })
+    .catch(err => {
+      res.send(err)
+    })
+  },
+  postReview: (req, res) => {
+    console.log(req.body)
+    models.postReview(req.body)
+    .then(response => {
+      res.send(response)
+    })
+    .catch(err => {
+      res.send(err)
+    })
+  }
 }

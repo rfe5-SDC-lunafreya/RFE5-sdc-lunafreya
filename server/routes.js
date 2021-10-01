@@ -20,8 +20,9 @@ router.get('/products', controller.products.get);
 //reviews
 //console.log(controller.reviews.getReviewsC)
 router.get('/:product_id/reviews/', controller.reviews.getReviewsC);
+router.get('/:product_id/reviews/meta', controller.reviews.getMetaData)
 router.put('/:review_id/helpful', controller.reviews.updateReviewHelpful);
-router.put('/:review_id/report', controller.reviews.reportReview);
+router.put('/:product_id/report', controller.reviews.reportReview);
 // router.post('/', xx.postReview);
 
 
