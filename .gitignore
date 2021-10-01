@@ -5,7 +5,10 @@ dist/*
 node_modules/
 *.log
 config.js
+
 *.zip
+
+reviews_database_service/.env
 
 # OS generated files
 .DS_Store
