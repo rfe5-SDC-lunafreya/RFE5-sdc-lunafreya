@@ -72,14 +72,14 @@ module.exports = {
       res.send(err)
     })
   },
-  // postReview: (req, res) => {
-  //   console.log(req.body)
-  //   models.postReview(req.body)
-  //   .then(response => {
-  //     res.send(response)
-  //   })
-  //   .catch(err => {
-  //     res.send(err)
-  //   })
-  // }
+  postReview: (req, res) => {
+    console.log('req', req.body)
+    models.postReview(req.body)
+    .then(response => {
+      res.send(response)
+    })
+    .catch(err => {
+      res.send(err)
+    })
+  }
 }

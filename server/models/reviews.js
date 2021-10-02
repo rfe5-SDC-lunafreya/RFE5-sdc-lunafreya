@@ -68,12 +68,27 @@ module.exports = {
   // ?convert date?  ROUND(EXTRACT(EPOCH FROM NOW())::float*1000)
 
   //! Going to have to refurbish incoming data and break it into pieces to place in different tables.
+  //review properties that start as base. Time from current moment of post. reported, a response to that review, and whether its helpful or not.
+// ? how do i get the review id to insert into review_photos
+  postReview: function (review) {
+    const data = db.pool;
 
-  // postReview: function (review) {
-  //   const data = db.pool;
+    const reviewsQS = `WITH reviews_insert AS (INSERT INTO reviews(id, product_id), rating, data, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(default, ${review.product_id}, ${review.rating}, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), ${review.summary}, ${review.body}, ${review.recommend}, FALSE, ${review.name}, ${review.email}, '', 0) RETURNING id), INSERT INTO reviews_photos(review_id, url) VALUES((SELECT id FROM reviews_insert), ${review.photos.forEach(photo => { return photo })})`
 
-  //   return data.query()
-  // }
+  //  `INSERT INTO reviews_photos (review_id, url) VALUES(${review.id}, ${(review.photo.forEach(photo => {
+  //     console.log(photo.id)
+  //     return (`${photo.id}, ${photo.url}`)
+  //   }))})`
+
+  // "characteristics": {"4": 64,"3":63,"2":62, "1":61 }
+    return data.query(reviewsQS)
+    .then(() => {
+     console.log('successfully logged to db')
+    })
+    .catch(err => {
+      console.log('ERROR POST', err)
+    })
+}
 }
 
 

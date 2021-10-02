@@ -84,7 +84,6 @@ var recommended = {
 for(var i = 0; i < dataArr.length; i++) {
   var review = dataArr[i];
   if (ratings[review.rating] !== undefined) {
-    // console.log(`test---> ${JSON.stringify(ratings)} --->`, ratings[review.rating])
     ratings[review.rating]++
   }
  if(recommended[review.recommend] !== undefined) {
@@ -92,16 +91,12 @@ for(var i = 0; i < dataArr.length; i++) {
  }
 }
 JSON.stringify(characteristcsData)
-// console.log('RATINGS--->  ', ratings)
-// console.log('RECOMMEND---> ', recommended)
-// console.log('CHAR DATA', characteristcsData)
 finalCharacteristics.product_id = product_id;
 finalCharacteristics.ratings = ratings;
 finalCharacteristics.recommended = recommended;
 finalCharacteristics.characteristics = characteristcsData;
 console.log(finalCharacteristics)
 return finalCharacteristics;
-
 }
 
 
