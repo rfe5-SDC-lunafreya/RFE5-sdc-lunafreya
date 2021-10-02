@@ -49,34 +49,65 @@ const organizeCharacteristics = function (dataArr) {
   let charactersticsAtName = {};
   for(var i = 0; i < dataArr.length; i++) {
     const review = dataArr[i];
-    // console.log('REVIEW', review)
-    //console.log('char NAME pre', charactersticsAtName[review.characteristics_name])
     if(!charactersticsAtName[review.characteristics_name]) {
       charactersticsAtName[review.characteristics_name] = {
         id: review.characteristics_id,
         value: [review.characteristics_value]
       };
     } else if (charactersticsAtName[review.characteristics_name]) {
-      // console.log('char value', charactersticsAtName[review.characteristics_name].value)
-      // console.log('value to be pushed,', review.characteristics_value)
       charactersticsAtName[review.characteristics_name].value.push(review.characteristics_value)
     }
   }
   for (var key in charactersticsAtName) {
     var values = charactersticsAtName[key].value
-    //console.log('VALUES', values)
     const average = (values) => values.reduce((a, b) => a + b) / values.length;
-   // console.log('AVG', average(values));
     charactersticsAtName[key].value = average(values)
   }
-
-  //console.log('Wumbo', charactersticsAtName)
   return charactersticsAtName
+}
+
+const organizeMeta = function(dataArr, characteristcsData, product_id) {
+console.log(dataArr, characteristcsData)
+var finalCharacteristics = {};
+var product_id = product_id.toString();
+var ratings = {
+  "1": 0,
+  "2": 0,
+  "3": 0,
+  "4": 0,
+  "5": 0
+}
+var recommended = {
+  "false": 0,
+  "true": 0
+}
+for(var i = 0; i < dataArr.length; i++) {
+  var review = dataArr[i];
+  if (ratings[review.rating] !== undefined) {
+    // console.log(`test---> ${JSON.stringify(ratings)} --->`, ratings[review.rating])
+    ratings[review.rating]++
+  }
+ if(recommended[review.recommend] !== undefined) {
+  recommended[review.recommend]++
+ }
+}
+JSON.stringify(characteristcsData)
+// console.log('RATINGS--->  ', ratings)
+// console.log('RECOMMEND---> ', recommended)
+// console.log('CHAR DATA', characteristcsData)
+finalCharacteristics.product_id = product_id;
+finalCharacteristics.ratings = ratings;
+finalCharacteristics.recommended = recommended;
+finalCharacteristics.characteristics = characteristcsData;
+console.log(finalCharacteristics)
+return finalCharacteristics;
+
 }
 
 
 module.exports = {
   organizePhotos,
   handleSortAndCount,
-  organizeCharacteristics
+  organizeCharacteristics,
+  organizeMeta
 }

@@ -56,13 +56,14 @@ module.exports = {
     })
   },
   getMetaData: (req, res) => {
-    console.log(req.params.product_id)
-    models.getMetaData(req.params.product_id)
+    var product_id = req.params.product_id
+
+    models.getMetaData(product_id)
     .then(data => {
       var characteristics = funcs.organizeCharacteristics(data)
-      console.log('data', characteristics)
+      var returnedMeta = funcs.organizeMeta(data, characteristics, product_id)
 
-      return data
+      return returnedMeta;
     })
     .then(response => {
       res.send(response)
