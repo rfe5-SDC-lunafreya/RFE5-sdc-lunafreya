@@ -58,6 +58,12 @@ module.exports = {
   getMetaData: (req, res) => {
     console.log(req.params.product_id)
     models.getMetaData(req.params.product_id)
+    .then(data => {
+      var characteristics = funcs.organizeCharacteristics(data)
+      console.log('data', characteristics)
+
+      return data
+    })
     .then(response => {
       res.send(response)
     })
@@ -65,14 +71,14 @@ module.exports = {
       res.send(err)
     })
   },
-  postReview: (req, res) => {
-    console.log(req.body)
-    models.postReview(req.body)
-    .then(response => {
-      res.send(response)
-    })
-    .catch(err => {
-      res.send(err)
-    })
-  }
+  // postReview: (req, res) => {
+  //   console.log(req.body)
+  //   models.postReview(req.body)
+  //   .then(response => {
+  //     res.send(response)
+  //   })
+  //   .catch(err => {
+  //     res.send(err)
+  //   })
+  // }
 }

@@ -45,8 +45,38 @@ const handleSortAndCount = function(data, sort, count) {
   return data;
 };
 
+const organizeCharacteristics = function (dataArr) {
+  let charactersticsAtName = {};
+  for(var i = 0; i < dataArr.length; i++) {
+    const review = dataArr[i];
+    // console.log('REVIEW', review)
+    //console.log('char NAME pre', charactersticsAtName[review.characteristics_name])
+    if(!charactersticsAtName[review.characteristics_name]) {
+      charactersticsAtName[review.characteristics_name] = {
+        id: review.characteristics_id,
+        value: [review.characteristics_value]
+      };
+    } else if (charactersticsAtName[review.characteristics_name]) {
+      // console.log('char value', charactersticsAtName[review.characteristics_name].value)
+      // console.log('value to be pushed,', review.characteristics_value)
+      charactersticsAtName[review.characteristics_name].value.push(review.characteristics_value)
+    }
+  }
+  for (var key in charactersticsAtName) {
+    var values = charactersticsAtName[key].value
+    //console.log('VALUES', values)
+    const average = (values) => values.reduce((a, b) => a + b) / values.length;
+   // console.log('AVG', average(values));
+    charactersticsAtName[key].value = average(values)
+  }
+
+  //console.log('Wumbo', charactersticsAtName)
+  return charactersticsAtName
+}
+
 
 module.exports = {
   organizePhotos,
-  handleSortAndCount
+  handleSortAndCount,
+  organizeCharacteristics
 }

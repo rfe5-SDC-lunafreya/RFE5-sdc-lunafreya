@@ -69,11 +69,11 @@ module.exports = {
 
   //! Going to have to refurbish incoming data and break it into pieces to place in different tables.
 
-  postReview: function (review) {
-    const data = db.pool;
+  // postReview: function (review) {
+  //   const data = db.pool;
 
-    return data.query()
-  }
+  //   return data.query()
+  // }
 }
 
 
