@@ -89,7 +89,7 @@ module.exports = {
     }
     var returnable = '';
     for (var i = 0; i < review.photos.length; i++) {
-      const values = `(SELECT id, '${review.photos[i]}'),`
+      const values = `(SELECT max(id) FROM reviews, '${review.photos[i]}'),`
       returnable+= values;
     }
     // need to eliminate the comma from final insert
@@ -103,9 +103,7 @@ module.exports = {
       console.log('successfully logged Review to db')
       const photosQS = `INSERT INTO reviews_photos(review_id, url) VALUES(${photos(review)});`
       return data.query(photosQS)
-      .then(res => {
-        const characteristicsQS = ``
-      })
+
     })
     .catch(err => {
       console.log('ERROR POST', err)
