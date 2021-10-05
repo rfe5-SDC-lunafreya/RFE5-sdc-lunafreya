@@ -6,109 +6,134 @@ module.exports = {
   //? UNFORMATTED TOTAL DATA. MUST BE MANIPULATED FOR EXIT
   getReviews: function (product_id) {
     const data = db.pool
-   console.log(product_id)
+    console.log(product_id)
     return data.query(`SELECT DISTINCT reviews.product_id AS product, reviews.id AS reviews_id, reviews.rating, reviews.summary, reviews.recommend, reviews.response, reviews.body, to_timestamp(reviews.date / 1000) AS date, reviews.reviewer_name, reviews.helpfulness, reviews.reported, reviews_photos.url AS photo_url, reviews_photos.id AS photo_id
     FROM reviews LEFT JOIN reviews_photos
         ON reviews_photos.review_id = reviews.id, products
     WHERE reviews.product_id = ${product_id}
     AND reviews.product_id = products.id;` )
-    .then(responseData => {
-     // console.log(responseData.rows)
-      return responseData.rows;
-    })
-    .catch(err => {
-      console.log('ERROR MODEL', err)
-    })
+      .then(responseData => {
+        // console.log(responseData.rows)
+        return responseData.rows;
+      })
+      .catch(err => {
+        console.log('ERROR MODEL', err)
+      })
   },
 
-  reportReview: function(review_id) {
+  reportReview: function (review_id) {
     const data = db.pool;
     console.log(review_id)
     return data.query(`UPDATE reviews SET reported = TRUE WHERE id=${review_id};`)
-    .then(response => {
-      console.log('successful report', response)
-    })
-    .catch(err => {
-      console.log('ERROR reporting', err)
-    })
+      .then(response => {
+        console.log('successful report', response)
+      })
+      .catch(err => {
+        console.log('ERROR reporting', err)
+      })
   },
 
   updateReviewHelpful: function (review_id) {
     const data = db.pool;
     return data.query(`UPDATE reviews SET helpfulness = helpfulness + 1 WHERE id=${review_id}`)
-    .then(response => {
-      console.log(`posted review ${review_id} as helpful`, response)
-    })
-    .catch(err => {
-      console.log(('ERROR adding helpful note', err))
-    })
+      .then(response => {
+        console.log(`posted review ${review_id} as helpful`, response)
+      })
+      .catch(err => {
+        console.log(('ERROR adding helpful note', err))
+      })
   },
-// LEFT JOIN characteristics ON characteristics.product_id = reviews.product_id, reviews_characteristics, products
-//AND reviews_characteristics.review_id = reviews.id
+  // LEFT JOIN characteristics ON characteristics.product_id = reviews.product_id, reviews_characteristics, products
+  //AND reviews_characteristics.review_id = reviews.id
   // AND characteristics.id = reviews_characteristics.characteristic_id
   // AND reviews.product_id = products.id;`
   getMetaData: function (product_id) {
-  const QS = `SELECT DISTINCT
+    const QS = `SELECT DISTINCT
   reviews.id AS reviews_id, reviews.rating, reviews.recommend FROM reviews WHERE reviews.product_id = ${product_id};`
 
     const data = db.pool
-     return data.query(QS)
-    .then(response => {
+    return data.query(QS)
+      .then(response => {
         console.log('ANDONE', response.rows)
         const QS = `SELECT characteristics.name AS characteristics_name, characteristics.id AS characteristics_id, reviews_characteristics.value AS characteristics_value FROM reviews_characteristics RIGHT OUTER JOIN characteristics ON reviews_characteristics.characteristic_id = characteristics.id WHERE characteristics.product_id = ${product_id} GROUP BY characteristics.name, characteristics.id, reviews_characteristics.value;`
 
-       return data.query(QS)
-        .then(responseData => {
-          var returnable = {}
-          returnable.reviewStuff = response.rows;
-          returnable.characteristics = responseData.rows;
-          // response.rows.push(responseData.rows)
-          console.log('AND', response.rows)
-          return returnable
-        })
-        .catch(err => {
-          console.log('err here', err)
-        })
+        return data.query(QS)
+          .then(responseData => {
+            var returnable = {}
+            returnable.reviewStuff = response.rows;
+            returnable.characteristics = responseData.rows;
+            // response.rows.push(responseData.rows)
+            console.log('AND', response.rows)
+            return returnable
+          })
+          .catch(err => {
+            console.log('err here', err)
+          })
 
       })
       .catch(err => {
         console.log('ERROR MODEL', err)
       })
-    },
+  },
 
   // ?convert date?  ROUND(EXTRACT(EPOCH FROM NOW())::float*1000)
 
   //! Going to have to refurbish incoming data and break it into pieces to place in different tables.
   //review properties that start as base. Time from current moment of post. reported, a response to that review, and whether its helpful or not.
-// ? how do i get the review id to insert into review_photos
+  // ? how do i get the review id to insert into review_photos
   postReview: function (review) {
+    console.log(1)
     const data = db.pool;
+    //? PHOTOS FUNC
+    console.log(2)
     const photos = function (review) {
       if (!review.photos) {
-      return ''
+        return ''
+      }
+      console.log(5)
+      var returnable = '';
+      for (var i = 0; i < review.photos.length; i++) {
+        const values = `((SELECT max(id) FROM reviews), '${review.photos[i]}'),`
+        returnable += values;
+      }
+      returnable = returnable.slice(0, -1);
+      return returnable
     }
-    var returnable = '';
-    for (var i = 0; i < review.photos.length; i++) {
-      const values = `(SELECT max(id) FROM reviews, '${review.photos[i]}'),`
-      returnable+= values;
-    }
-    // need to eliminate the comma from final insert
-    returnable = returnable.slice(0, -1);
-    return returnable
-  }
-  // console.log(photos(review))
-    const reviewsQS = `INSERT INTO reviews(product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(${review.product_id}, ${review.rating}, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), '${review.summary}', '${review.body}', ${review.recommend}, FALSE, '${review.name}', '${review.email}', '', 0);`
-    return data.query(reviewsQS)
-    .then((res) => {
-      console.log('successfully logged Review to db')
-      const photosQS = `INSERT INTO reviews_photos(review_id, url) VALUES(${photos(review)});`
-      return data.query(photosQS)
 
-    })
-    .catch(err => {
-      console.log('ERROR POST', err)
-    })
-}
+
+    const chars = function (chars) {
+      let returnable = '';
+
+      for (const key in chars) {
+        const values = `(${key}, (SELECT max(id) FROM reviews), ${chars[key]}),`;
+
+        returnable += values;
+      }
+      return returnable.slice(0, -1);
+    };
+
+    console.log(3)
+    const reviewsQS = `INSERT INTO reviews(product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(${review.product_id}, ${review.rating}, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), '${review.summary}', '${review.body}', ${review.recommend}, FALSE, '${review.name}', '${review.email}', '', 0);`
+    console.log(4)
+    return data.query(reviewsQS)
+      .then((res) => {
+        console.log('successfully logged Review to db')
+        const photosQS = `INSERT INTO reviews_photos(review_id, url) VALUES${photos(review)};`
+        console.log(photosQS)
+        return data.query(photosQS)
+          .then(res => {
+            console.log('successfully logged Photos to db')
+              const charsQS = `INSERT INTO reviews_characteristics(characteristic_id, review_id, value) VALUES${chars(review.characteristics)}`
+              return data.query(charsQS)
+              .then(res => {
+                console.log('successfully logged Characteristics to db')
+              })
+            })
+      })
+      .catch(err => {
+        console.log('ERROR POST', err)
+      })
+  }
 }
 
 

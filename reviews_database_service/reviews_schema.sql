@@ -56,6 +56,12 @@ CREATE TABLE characteristics(
 
 \copy reviews(id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) from '/Users/michaelharfenist/Downloads/reviews.csv' delimiter ',' csv header
 
+CREATE INDEX ON products(id);
+CREATE INDEX ON reviews(product_id);
+CREATE INDEX ON reviews_photos(review_id);
+CREATE INDEX ON characteristics(id);
+CREATE INDEX ON reviews_characteristics(review_id);
+
 ALTER TABLE reviews
   ADD CONSTRAINT fk_reviews FOREIGN KEY (product_id) REFERENCES products(id);
 

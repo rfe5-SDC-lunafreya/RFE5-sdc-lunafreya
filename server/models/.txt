@@ -19,3 +19,38 @@ CURRENT OUTPUT QS
 
 
 WITH reviews_insert AS (INSERT INTO reviews(product_id, rating, data, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(2, 5, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), 'BLUE RULES', 'Blue has a distaste for postgresql ', true, FALSE, 'Bb Blue', 'bluesRoom@gmail.com', '', 0) RETURNING id), photos_insert AS (INSERT INTO reviews_photos(review_id, url) VALUES((SELECT id, 'Blue'),(SELECT id, 'Images')) RETURNING *);
+
+
+PHOTOS
+INSERT INTO reviews_photos(review_id, url)
+VALUES(((SELECT max(id) FROM reviews), 'BLUE.com'), ((SELECT max(id) FROM reviews), 'YELLOW.com'));
+
+
+INSERT INTO reviews_photos(review_id, url)
+VALUES(37313, 'BLUE.com'), (37313, 'IDK.URL');
+
+INSERT INTO reviews_photos(review_id, url)
+VALUES(37313, 'YELLOW.com');
+
+
+INSERT INTO reviews_photos(review_id, url)
+VALUES((SELECT max(id) FROM reviews), 'BLUE.com');
+
+{
+    "product_id": 5,
+    "rating": 5,
+    "summary": "BLUE RULES",
+    "body": "Blue has a distaste for postgresql ",
+    "recommend": true,
+    "name": "Bb Blue",
+    "email": "bluesRoom@gmail.com",
+    "photos": ["Blue", "Images", "another.url"]
+}
+
+
+
+
+
+Error at or near 's'
+
+INSERT INTO reviews(product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(90, 5, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), 'test', 'chillen', true, FALSE, 'mike', 'mike.com', '', 0);
