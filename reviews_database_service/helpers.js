@@ -49,6 +49,7 @@ const organizeCharacteristics = function (dataArr) {
   let charactersticsAtName = {};
   for(var i = 0; i < dataArr.length; i++) {
     const review = dataArr[i];
+    console.log('REVIEW ORGANIZE CHARS', review)
     if(!charactersticsAtName[review.characteristics_name]) {
       charactersticsAtName[review.characteristics_name] = {
         id: review.characteristics_id,
@@ -67,7 +68,7 @@ const organizeCharacteristics = function (dataArr) {
 }
 
 const organizeMeta = function(dataArr, characteristcsData, product_id) {
-console.log(dataArr, characteristcsData)
+//console.log(dataArr, characteristcsData)
 var finalCharacteristics = {};
 var product_id = product_id.toString();
 var ratings = {
@@ -95,7 +96,7 @@ finalCharacteristics.product_id = product_id;
 finalCharacteristics.ratings = ratings;
 finalCharacteristics.recommended = recommended;
 finalCharacteristics.characteristics = characteristcsData;
-console.log(finalCharacteristics)
+//console.log(finalCharacteristics)
 return finalCharacteristics;
 }
 

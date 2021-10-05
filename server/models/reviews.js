@@ -43,27 +43,38 @@ module.exports = {
       console.log(('ERROR adding helpful note', err))
     })
   },
-
+// LEFT JOIN characteristics ON characteristics.product_id = reviews.product_id, reviews_characteristics, products
+//AND reviews_characteristics.review_id = reviews.id
+  // AND characteristics.id = reviews_characteristics.characteristic_id
+  // AND reviews.product_id = products.id;`
   getMetaData: function (product_id) {
   const QS = `SELECT DISTINCT
-  reviews.id AS reviews_id, reviews.rating, reviews.recommend, reviews_characteristics.value AS characteristics_value, reviews_characteristics.characteristic_id AS characteristics_id, characteristics.name AS characteristics_name
-  FROM reviews LEFT JOIN characteristics
-      ON characteristics.product_id = reviews.product_id,
-  reviews_characteristics, products
-  WHERE reviews.product_id = ${product_id}
-  AND reviews_characteristics.review_id = reviews.id
-  AND characteristics.id = reviews_characteristics.characteristic_id
-  AND reviews.product_id = products.id;`
+  reviews.id AS reviews_id, reviews.rating, reviews.recommend FROM reviews WHERE reviews.product_id = ${product_id};`
+
     const data = db.pool
-    return data.query(QS)
-    .then(responseData => {
-      // console.log(responseData.rows)
-      return responseData.rows;
-    })
-    .catch(err => {
-      console.log('ERROR MODEL', err)
-    })
-},
+     return data.query(QS)
+    .then(response => {
+        console.log('ANDONE', response.rows)
+        const QS = `SELECT characteristics.name AS characteristics_name, characteristics.id AS characteristics_id, reviews_characteristics.value AS characteristics_value FROM reviews_characteristics RIGHT OUTER JOIN characteristics ON reviews_characteristics.characteristic_id = characteristics.id WHERE characteristics.product_id = ${product_id} GROUP BY characteristics.name, characteristics.id, reviews_characteristics.value;`
+
+       return data.query(QS)
+        .then(responseData => {
+          var returnable = {}
+          returnable.reviewStuff = response.rows;
+          returnable.characteristics = responseData.rows;
+          // response.rows.push(responseData.rows)
+          console.log('AND', response.rows)
+          return returnable
+        })
+        .catch(err => {
+          console.log('err here', err)
+        })
+
+      })
+      .catch(err => {
+        console.log('ERROR MODEL', err)
+      })
+    },
 
   // ?convert date?  ROUND(EXTRACT(EPOCH FROM NOW())::float*1000)
 
@@ -72,18 +83,29 @@ module.exports = {
 // ? how do i get the review id to insert into review_photos
   postReview: function (review) {
     const data = db.pool;
-
-    const reviewsQS = `WITH reviews_insert AS (INSERT INTO reviews(id, product_id), rating, data, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(default, ${review.product_id}, ${review.rating}, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), ${review.summary}, ${review.body}, ${review.recommend}, FALSE, ${review.name}, ${review.email}, '', 0) RETURNING id), INSERT INTO reviews_photos(review_id, url) VALUES((SELECT id FROM reviews_insert), ${review.photos.forEach(photo => { return photo })})`
-
-  //  `INSERT INTO reviews_photos (review_id, url) VALUES(${review.id}, ${(review.photo.forEach(photo => {
-  //     console.log(photo.id)
-  //     return (`${photo.id}, ${photo.url}`)
-  //   }))})`
-
-  // "characteristics": {"4": 64,"3":63,"2":62, "1":61 }
+    const photos = function (review) {
+      if (!review.photos) {
+      return ''
+    }
+    var returnable = '';
+    for (var i = 0; i < review.photos.length; i++) {
+      const values = `(SELECT id, '${review.photos[i]}'),`
+      returnable+= values;
+    }
+    // need to eliminate the comma from final insert
+    returnable = returnable.slice(0, -1);
+    return returnable
+  }
+  // console.log(photos(review))
+    const reviewsQS = `INSERT INTO reviews(product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(${review.product_id}, ${review.rating}, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), '${review.summary}', '${review.body}', ${review.recommend}, FALSE, '${review.name}', '${review.email}', '', 0);`
     return data.query(reviewsQS)
-    .then(() => {
-     console.log('successfully logged to db')
+    .then((res) => {
+      console.log('successfully logged Review to db')
+      const photosQS = `INSERT INTO reviews_photos(review_id, url) VALUES(${photos(review)});`
+      return data.query(photosQS)
+      .then(res => {
+        const characteristicsQS = ``
+      })
     })
     .catch(err => {
       console.log('ERROR POST', err)
@@ -95,12 +117,16 @@ module.exports = {
 
 
 
-// `SELECT DISTINCT
-// reviews.id AS reviews_id, reviews.rating, reviews.summary, reviews.recommend, reviews.response, reviews.body, to_timestamp(reviews.date / 1000) AS date, reviews.reviewer_name, reviews.helpfulness, reviews.reported, reviews_characteristics.value AS characteristics_value, reviews_characteristics.characteristic_id AS characteristics_id, characteristics.name AS characteristics_name, products.name AS product_name, reviews_photos.url AS photo_url, reviews_photos.id AS photo_id
-// FROM reviews LEFT JOIN reviews_photos
-//     ON reviews_photos.review_id = reviews.id,
-// reviews_characteristics, characteristics, products
-// WHERE reviews.product_id = ${product_id}
-// AND reviews_characteristics.review_id = reviews.id
-// AND characteristics.id = reviews_characteristics.characteristic_id
-// AND reviews.product_id = products.id;`
+/*
+
+(SELECT id, '[object Object]'),(SELECT id, '[object Object]'))
+
+
+WITH reviews_insert AS (INSERT INTO reviews(product_id, rating, data, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(2, 5, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), 'BLUE RULES', 'Blue key 4: has value 64, key 3: value 63, key 2: value 62, key 1: 61 ', true, FALSE, 'Bb Blue', 'bluesRoom@gmail.com', '', 0) RETURNING id),
+
+photos_insert AS (INSERT INTO reviews_photos(review_id, url)
+
+VALUES((SELECT id, '{1, 'Blue'}'),(SELECT id, '{2, 'Images'}')) FROM reviews_insert RETURNING * );
+
+SELECT pg_catalog.setval(pg_get_serial_sequence('reviews', 'id'), MAX(id)) FROM reviews;
+*/

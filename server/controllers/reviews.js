@@ -60,8 +60,9 @@ module.exports = {
 
     models.getMetaData(product_id)
     .then(data => {
-      var characteristics = funcs.organizeCharacteristics(data)
-      var returnedMeta = funcs.organizeMeta(data, characteristics, product_id)
+      console.log('CONTROLLER DATA', data.characteristics)
+      var characteristics = funcs.organizeCharacteristics(data.characteristics)
+      var returnedMeta = funcs.organizeMeta(data.reviewStuff, characteristics, product_id)
 
       return returnedMeta;
     })

@@ -1,0 +1,21 @@
+
+WORKING POSTGRESQL
+
+      CHECKED
+      INSERT INTO reviews(product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(2, 5, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), 'BLUE RULES', 'Blue has a distaste for postgresql', true, FALSE, 'Bb Blue', 'bluesRoom@gmail.com', '', 0);
+
+      CHECKED
+      INSERT INTO reviews_photos(review_id, url)VALUES((37313), 'Blue');
+
+WHAT WORKS?? // knitpicking WITH, SELECT, FROM
+
+WITH reviews_insert AS (INSERT INTO reviews(product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(2, 5, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), 'BLUE RULES', 'Blue has a distaste for postgresql', true, FALSE, 'Bb Blue', 'bluesRoom@gmail.com', '', 0) RETURNING id), photos_insert AS (INSERT INTO reviews_photos(review_id, url) VALUES((SELECT id FROM reviews_insert), 'Blue.com') RETURNING (SELECT id FROM reviews_insert));
+
+OPTIMiZATION PRACTICE: create minor scale DB and attempt to query using WITH.
+
+CURRENT OUTPUT QS
+
+(SELECT id, 'Blue'),(SELECT id, 'Images')
+
+
+WITH reviews_insert AS (INSERT INTO reviews(product_id, rating, data, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES(2, 5, ROUND(EXTRACT(EPOCH FROM NOW())::float*1000), 'BLUE RULES', 'Blue has a distaste for postgresql ', true, FALSE, 'Bb Blue', 'bluesRoom@gmail.com', '', 0) RETURNING id), photos_insert AS (INSERT INTO reviews_photos(review_id, url) VALUES((SELECT id, 'Blue'),(SELECT id, 'Images')) RETURNING *);
