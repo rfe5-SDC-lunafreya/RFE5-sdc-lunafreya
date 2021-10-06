@@ -1,23 +1,57 @@
-const app = require('./server/index.js')
+// const app = require('./server/index.js')
 const request = require('supertest')
 const routes = require('./server/routes.js')
+const express = require('express')
+const db = require('./reviews_database_service/dbConnection.js')
 
 
+let app = express();
+let port = 3001 || process.env.PORT;
+
+app.use('/', routes);
+
+var appServer = app.listen(port, () => {
+  console.log('TESTING on ' + port)
+})
+
+
+afterAll((done) => {
+  db.pool.end;
+  appServer.close();
+  console.log('CLOSE UP SHOP')
+  done();
+});
 
 describe("GET :product_id/reviews", () => {
   test("It should respond with an array of reviews",  (done) => {
     request(app)
     .get('/37313/reviews')
-    .set('Accept', 'application/json')
-    .expect('Content-Type', /json/)
     .then(response => {
-      expect(response.statusCode).toBe(200)
+      expect(200);
+      expect(response.body[0]).toHaveProperty("product");
+      expect(response.body[0]).toHaveProperty("results");
+      expect(response.body[0].results[0]).toHaveProperty("review_id");
+
       done();
     })
     .catch(err => done(err))
   });
 });
+describe("GET :product_id/reviews/meta", () => {
+  test("It should respond with an array of reviews",  (done) => {
+    request(app)
+    .get('/37313/reviews/meta')
+    .then(response => {
+      expect(200);
+      expect(response.body).toHaveProperty("product_id");
+      expect(response.body).toHaveProperty("recommended");
+      expect(response.body.ratings).toHaveProperty("1");
 
+      done();
+    })
+    .catch(err => done(err))
+  });
+});
 
 
 

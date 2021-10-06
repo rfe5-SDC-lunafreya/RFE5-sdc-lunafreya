@@ -1,17 +1,15 @@
 const organizeReviews = (reviews, count, page) => {
-  //console.log('REVIEW', review)
   const holder = [];
   const finalArr = [];
   const idTracking = {}
   for (var i = 0; i < reviews.length; i++) {
 
    if (reviews[i].reviews_id === idTracking.reviews_id) {
-   //console.log('IF THERE ARE SAME ID', reviews[i].photos)
+
    var reviewID = reviews[i].reviews_id
    for (var j = 0; j < holder.length; j++) {
      if(holder[j].review_id === reviewID) {
-      //  console.log('LINGO ---> ',holder[j].photos)
-      //  console.log(true)
+
        holder[j].photos.push(organizePhotos(reviews[i]))
      }
    }
@@ -36,33 +34,36 @@ const organizeReviews = (reviews, count, page) => {
     holder.push(review)
   }
 }
+console.log(reviews[0].product)
+var reviewFinal = {
+  product: reviews[0].product,
+  page: page || 1,
+  count: count || 5,
+  results: []
+}
+
 for (var b = 0; b < holder.length; b++) {
-  console.log(holder[b].photos )
+
   if (holder[b].photos[0] === null || holder[b].photos[0] === undefined) {
-    console.log('TRUTHIIIIIII')
     holder[b].photos = []
   }
-  var reviewFinal = {
-    product: holder[b].product,
-    page: page || 1,
-    count: count || 5,
-    results: [{
-      review_id: holder[b].review_id,
-      rating: holder[b].rating,
-      summary: holder[b].summary,
-      recommend: holder[b].recommend,
-      response: holder[b].response,
-      body: holder[b].body,
-      date: holder[b].date,
-      reviewer_name: holder[b].reviewer_name,
-      helpfulness: holder[b].helpfulness,
-      reported: holder[b].reported,
-      photos: holder[b].photos
-    }]
+  var results = {
+    review_id: holder[b].review_id,
+    rating: holder[b].rating,
+    summary: holder[b].summary,
+    recommend: holder[b].recommend,
+    response: holder[b].response,
+    body: holder[b].body,
+    date: holder[b].date,
+    reviewer_name: holder[b].reviewer_name,
+    helpfulness: holder[b].helpfulness,
+    reported: holder[b].reported,
+    photos: holder[b].photos
   }
-  finalArr.push(reviewFinal)
+  reviewFinal.results.push(results)
 }
-  // console.log('FINAL ARR', finalArr, 'FINAL AT TWO aka review id 5', finalArr[2].results[0].photos, 'FINAL AT ONEEEEEEEEE', finalArr[1].results[0].photos)
+finalArr.push(reviewFinal)
+
   return finalArr;
 }
 
@@ -83,13 +84,13 @@ const organizePhotos = (reviews) => {
     })
     return photosLarge;
   } else {
-   //console.log('REVIEWS', reviews.reviews_id, reviews.photo_id)
+
     const renamePhotoProps = {
       id: reviews.photo_id,
       url: reviews.photo_url,
     };
     if (check.indexOf(reviews.photo_url) === -1 && reviews.photo_url) {
-      //console.log(2, renamePhotoProps)
+
       var photos = renamePhotoProps
     } else {
      return;
@@ -120,7 +121,7 @@ const organizeCharacteristics = function (dataArr) {
   let charactersticsAtName = {};
   for(var i = 0; i < dataArr.length; i++) {
     const review = dataArr[i];
-    //console.log('REVIEW ORGANIZE CHARS', review)
+
     if(!charactersticsAtName[review.characteristics_name]) {
       charactersticsAtName[review.characteristics_name] = {
         id: review.characteristics_id,
@@ -139,7 +140,7 @@ const organizeCharacteristics = function (dataArr) {
 }
 
 const organizeMeta = function(dataArr, characteristcsData, product_id) {
-//console.log(dataArr, characteristcsData)
+
 var finalCharacteristics = {};
 var product_id = product_id.toString();
 var ratings = {
@@ -167,7 +168,7 @@ finalCharacteristics.product_id = product_id;
 finalCharacteristics.ratings = ratings;
 finalCharacteristics.recommended = recommended;
 finalCharacteristics.characteristics = characteristcsData;
-//console.log(finalCharacteristics)
+
 return finalCharacteristics;
 }
 

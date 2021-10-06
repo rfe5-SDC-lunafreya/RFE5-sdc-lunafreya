@@ -12,7 +12,6 @@ module.exports = {
 
     models.getReviews(req.params.product_id)
       .then(data => {
-        console.log('DATA OUTPUT', data)
           var final = funcs.organizeReviews(data, count, page);
           data = final;
         return data;
@@ -24,7 +23,6 @@ module.exports = {
         return newReviews;
       })
       .then(newReviews => {
-        //console.log('newReviews', newReviews)
         res.status(200).send(newReviews);
       })
       .catch(err => {

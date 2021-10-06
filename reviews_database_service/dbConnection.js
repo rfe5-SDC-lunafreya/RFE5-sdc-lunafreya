@@ -19,11 +19,17 @@ pool
   console.log('error connecting: ', err);
 });
 
+// const pool = new Pool();
 
 exports.pool = pool;
 
 
-
+//const pool = new Pool();
+// (async function() {
+//   const client = await pool.connect()
+//   await client.query('SELECT NOW ()')
+//   client.release()
+// })
 // pool.query('SELECT reviewer_email FROM reviews WHERE id = 7', (err, res) => {
 //   console.log(err, res)
 //   pool.end()
