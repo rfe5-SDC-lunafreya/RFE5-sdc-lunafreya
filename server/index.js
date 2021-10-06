@@ -3,7 +3,8 @@ const axios = require('axios');
 const morgan = require('morgan');
 const {TOKEN} = require('../config.js');
 
-let app = express();
+
+const app = express();
 var router = require('./routes.js');
 app.use(express.json());
 
@@ -15,6 +16,14 @@ app.use(morgan('dev'));
 
 const port = 3001;
 
-app.listen(port, function() {
+app.listen(port, function(err) {
+  if (err) console.log("erro in serving setup")
   console.log(`Moving and groving on port ${port}`);
 });
+module.exports = {app: app, port: port};
+
+
+// app.listen(port, function(err) {
+//   if (err) console.log("erro in serving setup")
+//   console.log(`Moving and groving on port ${port}`);
+// });

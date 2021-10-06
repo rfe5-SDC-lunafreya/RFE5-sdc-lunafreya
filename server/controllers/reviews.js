@@ -25,7 +25,7 @@ module.exports = {
       })
       .then(newReviews => {
         //console.log('newReviews', newReviews)
-        res.send(newReviews);
+        res.status(200).send(newReviews);
       })
       .catch(err => {
         console.log('Wumbo', err)
