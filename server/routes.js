@@ -25,5 +25,8 @@ router.put('/:review_id/helpful', controller.reviews.updateReviewHelpful);
 router.put('/:product_id/report', controller.reviews.reportReview);
 router.post('/reviews', controller.reviews.postReview);
 
+router.get("/loaderio-12d49e83f3cab9566bec04d226dd1c7a", (req, res) => {
+  res.send("loaderio-12d49e83f3cab9566bec04d226dd1c7a")
+});
 
 module.exports = router;
